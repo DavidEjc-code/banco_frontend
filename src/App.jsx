@@ -1,5 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import TestConexion from "./components/TestConexion";
+import Login from "./components/Login";
+import Bienvenida from "./components/Bienvenida";
+import Transferencias from "./components/Transferencias";
+import OrdenPago from "./components/OrdenPago";
 
 // --- PÁGINA PRINCIPAL ---
 function Home() {
@@ -29,25 +33,44 @@ function Home() {
 // --- PÁGINAS SECUNDARIAS ---
 function Dashboard() {
   return (
-    <div >
+    <div>
       <h2>🏦 Ventanilla</h2>
-      
     </div>
   );
 }
 
-
 function Reporte() {
-  return <div style={styles.page}><h2>📋 Servicio al Cliente</h2></div>;
+  return (
+    <div style={styles.page}>
+      <h2>📋 Servicio al Cliente</h2>
+    </div>
+  );
 }
 
 function Configuracion() {
-  return <div ><h2>💳 Área de Créditos</h2>
-  <TestConexion /></div>;
+  return (
+    <div>
+      <h2>💳 Área de Créditos</h2>
+      <TestConexion />
+    </div>
+  );
 }
 
+// 🌐 --- ÁREA VIRTUAL (ahora con login incluido) ---
 function Acerca() {
-  return <div style={styles.page}><h2>🌐 Área Virtual</h2></div>;
+  return (
+    <div >
+      <div>
+        <h2></h2>
+        <Login />
+      </div>
+    </div>
+  );
+}
+
+// 🎉 Página de bienvenida tras iniciar sesión
+function BienvenidaPage() {
+  return <Bienvenida />;
 }
 
 // --- APP PRINCIPAL ---
@@ -60,6 +83,11 @@ function App() {
         <Route path="/reporte" element={<Reporte />} />
         <Route path="/configuracion" element={<Configuracion />} />
         <Route path="/acerca" element={<Acerca />} />
+        <Route path="/bienvenida" element={<BienvenidaPage />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/bienvenida" element={<Bienvenida />} />
+        <Route path="/transferencias" element={<Transferencias />} />
+        <Route path="/orden-pago" element={<OrdenPago />} />
       </Routes>
     </Router>
   );
@@ -99,11 +127,12 @@ const styles = {
   page: {
     minHeight: "100vh",
     display: "flex",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#1a1a1a",
     color: "#fff",
-    fontSize: "2rem",
+    fontSize: "1.2rem",
   },
 };
 

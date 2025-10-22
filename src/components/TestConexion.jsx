@@ -6,7 +6,7 @@ function TestConexion() {
   const [error, setError] = useState("");
 
 useEffect(() => {
-  api.get("/cliente/115") // este ID debe existir en tu DB
+  api.get("/cliente/101") // este ID debe existir en tu DB
     .then(res => setClientes([res.data])) // envolver en array para mapear
     .catch(err => {
       console.error(err);
