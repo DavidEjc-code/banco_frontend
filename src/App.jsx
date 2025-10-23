@@ -4,6 +4,8 @@ import Login from "./components/Login";
 import Bienvenida from "./components/Bienvenida";
 import Transferencias from "./components/Transferencias";
 import OrdenPago from "./components/OrdenPago";
+import CrearCuenta from "./components/CrearCuenta";
+import Depositar from "./components/Depositar";
 
 // --- PÁGINA PRINCIPAL ---
 function Home() {
@@ -32,9 +34,19 @@ function Home() {
 
 // --- PÁGINAS SECUNDARIAS ---
 function Dashboard() {
+  const navigate = useNavigate();
+
   return (
-    <div>
+    <div style={styles.page}>
       <h2>🏦 Ventanilla</h2>
+      <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
+        <button style={styles.button} onClick={() => navigate("/crear-cuenta")}>
+          Crear Cuenta
+        </button>
+        <button style={styles.button} onClick={() => navigate("/depositar")}>
+          Depositar
+        </button>
+      </div>
     </div>
   );
 }
@@ -49,26 +61,21 @@ function Reporte() {
 
 function Configuracion() {
   return (
-    <div>
+    <div style={styles.page}>
       <h2>💳 Área de Créditos</h2>
       <TestConexion />
     </div>
   );
 }
 
-// 🌐 --- ÁREA VIRTUAL (ahora con login incluido) ---
 function Acerca() {
   return (
-    <div >
-      <div>
-        <h2></h2>
-        <Login />
-      </div>
+    <div style={styles.page}>
+      <Login />
     </div>
   );
 }
 
-// 🎉 Página de bienvenida tras iniciar sesión
 function BienvenidaPage() {
   return <Bienvenida />;
 }
@@ -84,10 +91,10 @@ function App() {
         <Route path="/configuracion" element={<Configuracion />} />
         <Route path="/acerca" element={<Acerca />} />
         <Route path="/bienvenida" element={<BienvenidaPage />} />
-        <Route path="/" element={<Login />} />
-        <Route path="/bienvenida" element={<Bienvenida />} />
         <Route path="/transferencias" element={<Transferencias />} />
         <Route path="/orden-pago" element={<OrdenPago />} />
+        <Route path="/crear-cuenta" element={<CrearCuenta />} />
+        <Route path="/depositar" element={<Depositar />} />
       </Routes>
     </Router>
   );

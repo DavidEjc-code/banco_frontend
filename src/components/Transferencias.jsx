@@ -42,16 +42,18 @@ function Transferencias() {
 
       const data = await response.json();
 
-      if (data.success) {
-        setMensaje(
-          `✅ ${data.data.Mensaje}\nMonto: Q${data.data.Monto}\nTransacción: ${data.data.TransaccionID}`
-        );
-        setCuentaDestino("");
-        setMonto("");
-        setConcepto("");
-      } else {
-        setMensaje(`❌ Error: ${data.message}`);
-      }
+if (data.success) {
+  const info = data.data;
+  setMensaje(
+    `✅ ${info.mensaje}\nMonto: Q${info.monto}\nTransacción: ${info.transaccionId}`
+  );
+  setCuentaDestino("");
+  setMonto("");
+  setConcepto("");
+} else {
+  setMensaje(`❌ Error: ${data.message}`);
+}
+
     } catch (error) {
       console.error("Error en transferencia:", error);
       setMensaje("❌ Ocurrió un error al realizar la transferencia.");
@@ -162,3 +164,4 @@ const styles = {
 };
 
 export default Transferencias;
+

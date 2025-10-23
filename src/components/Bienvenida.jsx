@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 function Bienvenida() {
   const [cliente, setCliente] = useState(null);
   const [showDatos, setShowDatos] = useState(false);
   const [showCuenta, setShowCuenta] = useState(false);
-  const [mensaje, setMensaje] = useState(""); // 🔹 Nuevo estado para el mensaje temporal
+  const [showMovimientos, setShowMovimientos] = useState(false);
+  const [movimientos, setMovimientos] = useState([]);
+  const [showTarjetas, setShowTarjetas] = useState(false);
+  const [tarjetas, setTarjetas] = useState([]);
+  const [mensaje, setMensaje] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,9 +25,54 @@ function Bienvenida() {
     return `Bienvenido${cliente.genero === "F" ? "a" : ""}, ${cliente.nombre}`;
   };
 
-  const handleTarjetas = () => {
-    setMensaje("🚧 Sección de Tarjetas en mantenimiento 🚧");
-    setTimeout(() => setMensaje(""), 3000); // Limpia el mensaje después de 3 segundos
+  const handleMovimientos = async () => {
+    if (!cliente) return;
+    setShowMovimientos(!showMovimientos);
+
+    if (movimientos.length > 0) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const clienteId = cliente.id;
+      const response = await api.get(`/cliente/${clienteId}/movimientos?limite=5`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        setMovimientos(response.data.data.movimientos);
+      } else {
+        setMensaje("❌ No se pudieron obtener los movimientos.");
+      }
+    } catch (error) {
+      console.error("Error obteniendo movimientos:", error);
+      setMensaje("❌ Ocurrió un error al obtener los movimientos.");
+    }
+  };
+
+  const handleTarjetas = async () => {
+    if (!cliente) return;
+    setShowTarjetas(!showTarjetas);
+
+    // Si ya se cargaron antes, no volver a pedirlas
+    if (tarjetas.length > 0) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const clienteId = cliente.id;
+
+      const response = await api.get(`/tarjeta/cliente/${clienteId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        setTarjetas(response.data.data);
+      } else {
+        setMensaje("❌ No se pudieron obtener las tarjetas.");
+      }
+    } catch (error) {
+      console.error("Error obteniendo tarjetas:", error);
+      setMensaje("❌ Ocurrió un error al obtener las tarjetas.");
+    }
   };
 
   if (!cliente) {
@@ -54,10 +104,38 @@ function Bienvenida() {
         {showCuenta ? "Ocultar Cuenta" : "Cuenta"}
       </button>
 
-      {showCuenta && (
+     {showCuenta && (
+  <div style={styles.infoBox}>
+    {cliente.cuentas && cliente.cuentas.length > 0 ? (
+      cliente.cuentas.map((cuenta, index) => (
+        <div key={index} style={styles.cuentaBox}>
+          <p><strong>Número de cuenta:</strong> {cuenta.int_cuencodigo}</p>
+          <p><strong>Saldo:</strong> Q {cuenta.dec_cuensaldo?.toFixed(2)}</p>
+        </div>
+      ))
+    ) : (
+      <p>❌ No se encontraron cuentas asociadas.</p>
+    )}
+  </div>
+)}
+
+
+      {/* Botón: Movimientos Recientes */}
+      <button style={{ ...styles.button, backgroundColor: "#6c5ce7" }} onClick={handleMovimientos}>
+        {showMovimientos ? "Ocultar Movimientos" : "Movimientos Recientes"}
+      </button>
+
+      {showMovimientos && movimientos.length > 0 && (
         <div style={styles.infoBox}>
-          <p><strong>Número de cuenta:</strong> {cliente.cuentas?.[0]?.int_cuencodigo}</p>
-          <p><strong>Saldo:</strong> Q {cliente.cuentas?.[0]?.dec_cuensaldo?.toFixed(2)}</p>
+          {movimientos.map((mov) => (
+            <div key={mov.MovimientoNumero} style={styles.movItem}>
+              <p><strong>Fecha:</strong> {new Date(mov.FechaMovimiento).toLocaleString()}</p>
+              <p><strong>Tipo:</strong> {mov.TipoMovimiento === 1 ? "Depósito" : "Retiro"}</p>
+              <p><strong>Monto:</strong> Q {mov.Monto}</p>
+              <p><strong>Cuenta Referencia:</strong> {mov.CuentaReferencia}</p>
+              <p><strong>Transacción:</strong> {mov.TransaccionID}</p>
+            </div>
+          ))}
         </div>
       )}
 
@@ -82,10 +160,23 @@ function Bienvenida() {
         style={{ ...styles.button, backgroundColor: "#ff9800" }}
         onClick={handleTarjetas}
       >
-        💳 Tarjetas
+        💳 {showTarjetas ? "Ocultar Tarjetas" : "Tarjetas"}
       </button>
 
-      {/* Mensaje de mantenimiento */}
+      {showTarjetas && tarjetas.length > 0 && (
+        <div style={styles.infoBox}>
+          {tarjetas.map((t, index) => (
+            <div key={index} style={styles.tarjetaBox}>
+              <p><strong>Tipo:</strong> {t.tarjetaTipo}</p>
+              <p><strong>Número:</strong> {t.tarjetaMask}</p>
+              <p><strong>Estado:</strong> {t.tarjetaEstado}</p>
+              <p><strong>Vence:</strong> {new Date(t.fechaVencimiento).toLocaleDateString()}</p>
+              <p><strong>Cuenta Asociada:</strong> {t.cuentaId}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
       {mensaje && <p style={styles.mensaje}>{mensaje}</p>}
     </div>
   );
@@ -132,6 +223,26 @@ const styles = {
     fontSize: "0.95rem",
     boxShadow: "inset 0 0 10px rgba(0,0,0,0.3)",
   },
+  movItem: {
+    marginBottom: "8px",
+    borderBottom: "1px solid #555",
+    paddingBottom: "4px",
+  },
+  tarjetaBox: {
+    backgroundColor: "#2a2a2a",
+    borderRadius: "10px",
+    padding: "10px",
+    marginBottom: "10px",
+    boxShadow: "0 0 6px rgba(0,0,0,0.3)",
+  },
+  cuentaBox: {
+  backgroundColor: "#2a2a2a",
+  borderRadius: "10px",
+  padding: "10px",
+  marginBottom: "10px",
+  boxShadow: "0 0 6px rgba(0,0,0,0.3)",
+},
+
   mensaje: {
     marginTop: "15px",
     color: "#ffcc00",
