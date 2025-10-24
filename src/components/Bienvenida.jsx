@@ -49,6 +49,11 @@ function Bienvenida() {
     }
   };
 
+  const handleCerrarSesion = () => {
+  localStorage.removeItem("usuario");
+  navigate("/"); // redirige al login o página principal
+};
+
   const handleTarjetas = async () => {
     if (!cliente) return;
     setShowTarjetas(!showTarjetas);
@@ -178,6 +183,14 @@ function Bienvenida() {
       )}
 
       {mensaje && <p style={styles.mensaje}>{mensaje}</p>}
+
+      <button
+  style={{ ...styles.button, backgroundColor: "#e74c3c" }}
+  onClick={handleCerrarSesion}
+>
+  🔒 Cerrar Sesión
+</button>
+
     </div>
   );
 }

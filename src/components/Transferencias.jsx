@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 function Transferencias() {
   const [cuentaDestino, setCuentaDestino] = useState("");
@@ -22,38 +23,34 @@ function Transferencias() {
         return;
       }
 
-      const baseUrl = "http://localhost:3000/api/v1"; // 🔧 cambia si tu backend usa otro puerto
-      const cliente = JSON.parse(localStorage.getItem("usuario"));
-      const clienteId = cliente.id; // ejemplo: 110
+      const clienteId = cliente.id;
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`${baseUrl}/cliente/${clienteId}/transferir`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
+      const response = await api.post(
+        `/cliente/${clienteId}/transferir`,
+        {
           cuentaDestino: Number(cuentaDestino),
           monto: Number(monto),
           concepto: concepto || "Transferencia sin concepto",
-        }),
-      });
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-      const data = await response.json();
+      const data = response.data;
 
-if (data.success) {
-  const info = data.data;
-  setMensaje(
-    `✅ ${info.mensaje}\nMonto: Q${info.monto}\nTransacción: ${info.transaccionId}`
-  );
-  setCuentaDestino("");
-  setMonto("");
-  setConcepto("");
-} else {
-  setMensaje(`❌ Error: ${data.message}`);
-}
-
+      if (data.success) {
+        const info = data.data;
+        setMensaje(
+          `✅ ${info.mensaje}\nMonto: Q${info.monto}\nTransacción: ${info.transaccionId}`
+        );
+        setCuentaDestino("");
+        setMonto("");
+        setConcepto("");
+      } else {
+        setMensaje(`❌ Error: ${data.message}`);
+      }
     } catch (error) {
       console.error("Error en transferencia:", error);
       setMensaje("❌ Ocurrió un error al realizar la transferencia.");
@@ -164,4 +161,3 @@ const styles = {
 };
 
 export default Transferencias;
-

@@ -13,7 +13,6 @@ function CrearCuentaNueva() {
     setMensaje("");
 
     try {
-      // 1️⃣ Login
       const loginRes = await api.post("/auth/login", { username, password });
 
       if (!loginRes.data.success) {
@@ -26,7 +25,6 @@ function CrearCuentaNueva() {
       const isCliente = usuario.tipo === "cliente";
       const userId = usuario.id;
 
-      // 2️⃣ Crear cuenta con saldo por defecto
       const cuentaRes = await api.post("/cuenta", {
         monedaId: "01",
         sucursalId: "001",
@@ -58,14 +56,17 @@ function CrearCuentaNueva() {
       </p>
 
       <form style={styles.form} onSubmit={handleCrearCuenta}>
+        <label style={styles.label}>Ingresa tu usuario:</label>
         <input
           type="text"
-          placeholder="Usuario, NIT o DPI"
+          placeholder="Usuario"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
           style={styles.input}
         />
+
+        <label style={styles.label}>Ingresa tu contraseña:</label>
         <input
           type="password"
           placeholder="Contraseña"
@@ -74,6 +75,7 @@ function CrearCuentaNueva() {
           required
           style={styles.input}
         />
+
         <button type="submit" style={styles.button} disabled={loading}>
           {loading ? "Procesando..." : "Crear Cuenta"}
         </button>
@@ -105,6 +107,11 @@ const styles = {
     gap: "1rem",
     width: "100%",
     maxWidth: "400px",
+  },
+  label: {
+    color: "#ccc",
+    fontSize: "0.9rem",
+    marginBottom: "0.2rem",
   },
   input: {
     padding: "0.85rem",

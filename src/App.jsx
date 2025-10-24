@@ -8,6 +8,7 @@ import CrearCuenta from "./components/CrearCuenta";
 import Depositar from "./components/Depositar";
 import CrearNuevaCuenta from "./components/CrearNuevaCuenta";
 import AsociarTarjeta from "./components/AsociarTarjeta";
+import BienvenidaNegocio from "./components/BienvenidaNegocio";
 
 // --- PÁGINA PRINCIPAL ---
 function Home() {
@@ -115,6 +116,7 @@ function App() {
         <Route path="/depositar" element={<Depositar />} />
         <Route path="/servicio/crear-cuenta" element={<CrearNuevaCuenta />} />
         <Route path="/servicio/asociar-tarjeta" element={<AsociarTarjeta />} />
+        <Route path="/bienvenida-negocio" element={<BienvenidaNegocio />} />
       </Routes>
     </Router>
   );
