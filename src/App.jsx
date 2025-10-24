@@ -9,6 +9,8 @@ import Depositar from "./components/Depositar";
 import CrearNuevaCuenta from "./components/CrearNuevaCuenta";
 import AsociarTarjeta from "./components/AsociarTarjeta";
 import BienvenidaNegocio from "./components/BienvenidaNegocio";
+import fondo from "./assets/fondo.jpg";
+
 
 // --- PÁGINA PRINCIPAL ---
 function Home() {
@@ -81,7 +83,6 @@ function Reporte() {
 function Configuracion() {
   return (
     <div style={styles.page}>
-      <h2>💳 Área de Créditos</h2>
       <TestConexion />
     </div>
   );
@@ -130,13 +131,18 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     minHeight: "100vh",
-    backgroundColor: "#242424",
+    width: "100vw", // 🔹 asegura que ocupe todo el ancho
+    backgroundImage: `url(${fondo})`,
+    backgroundSize: "cover",       // hace que ocupe toda la pantalla
+    backgroundPosition: "center",  // centra la imagen
+    backgroundRepeat: "no-repeat", // evita que se repita
     color: "#fff",
     gap: "2rem",
   },
   title: {
     fontSize: "2rem",
     fontWeight: "bold",
+    textShadow: "2px 2px 8px #000", // mejora la legibilidad
   },
   buttonContainer: {
     display: "flex",
@@ -147,7 +153,7 @@ const styles = {
     padding: "1rem 2rem",
     borderRadius: "8px",
     border: "none",
-    backgroundColor: "#646cff",
+    backgroundColor: "rgba(100,108,255,0.85)",
     color: "#fff",
     fontSize: "1rem",
     cursor: "pointer",
@@ -157,6 +163,7 @@ const styles = {
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
+    width: "100vw", // 🔹 asegura que ocupe todo el ancho
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#1a1a1a",
@@ -164,5 +171,6 @@ const styles = {
     fontSize: "1.2rem",
   },
 };
+
 
 export default App;

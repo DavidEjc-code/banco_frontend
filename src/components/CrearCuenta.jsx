@@ -173,6 +173,7 @@ function CrearCuenta() {
 const styles = {
   page: {
     minHeight: "100vh",
+    width: "100vw", // 🔹 asegura que ocupe todo el ancho
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
