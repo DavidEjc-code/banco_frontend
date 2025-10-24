@@ -8,7 +8,6 @@ function CrearCuenta() {
   const [resultado, setResultado] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Manejo de inputs
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -16,7 +15,6 @@ function CrearCuenta() {
     });
   };
 
-  // Enviar datos al backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -25,12 +23,9 @@ function CrearCuenta() {
 
     try {
       if (opcion === "cliente") {
-        // --- FLUJO CLIENTE ---
         const resCliente = await api.post("/cliente", formData);
         if (resCliente.data.success) {
           const clienteData = resCliente.data.data;
-
-          // Crear cuenta automáticamente
           const cuentaRes = await api.post("/cuenta", {
             monedaId: "01",
             sucursalId: "001",
@@ -38,7 +33,6 @@ function CrearCuenta() {
             clienteId: clienteData.clienteId,
             saldoInicial: 100,
           });
-
           const cuentaData = cuentaRes.data;
           setResultado({
             titulo: "Cliente creado exitosamente",
@@ -51,12 +45,9 @@ function CrearCuenta() {
           setMensaje(resCliente.data.message || "Error al crear cliente");
         }
       } else {
-        // --- FLUJO NEGOCIO ---
         const resNegocio = await api.post("/negocio", formData);
         if (resNegocio.data.success) {
           const negocioData = resNegocio.data.data;
-
-          // Crear cuenta automáticamente
           const cuentaRes = await api.post("/cuenta", {
             monedaId: "01",
             sucursalId: "001",
@@ -64,9 +55,7 @@ function CrearCuenta() {
             negocioId: negocioData.NegocioID,
             saldoInicial: 100,
           });
-
           const cuentaData = cuentaRes.data;
-
           setResultado({
             titulo: "Negocio creado exitosamente",
             usuario: negocioData.Usuario,
@@ -89,10 +78,25 @@ function CrearCuenta() {
     }
   };
 
+  const renderInput = (name, label, type = "text", placeholder = "") => (
+    <div style={styles.inputGroup}>
+      <label htmlFor={name} style={styles.label}>{label}</label>
+      <input
+        id={name}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        onChange={handleChange}
+        required
+        style={styles.input}
+      />
+    </div>
+  );
+
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        <h2 style={{ textAlign: "center" }}>🆕 Crear Cuenta</h2>
+        <h2 style={{ textAlign: "center", marginBottom: "1.5rem" }}>🆕 Crear Cuenta</h2>
 
         {/* Selector */}
         <div style={styles.optionContainer}>
@@ -101,12 +105,7 @@ function CrearCuenta() {
               ...styles.optionButton,
               backgroundColor: opcion === "cliente" ? "#646cff" : "#444",
             }}
-            onClick={() => {
-              setOpcion("cliente");
-              setFormData({});
-              setMensaje("");
-              setResultado(null);
-            }}
+            onClick={() => { setOpcion("cliente"); setFormData({}); setMensaje(""); setResultado(null); }}
           >
             Crear Cliente
           </button>
@@ -115,39 +114,34 @@ function CrearCuenta() {
               ...styles.optionButton,
               backgroundColor: opcion === "negocio" ? "#646cff" : "#444",
             }}
-            onClick={() => {
-              setOpcion("negocio");
-              setFormData({});
-              setMensaje("");
-              setResultado(null);
-            }}
+            onClick={() => { setOpcion("negocio"); setFormData({}); setMensaje(""); setResultado(null); }}
           >
             Crear Negocio
           </button>
         </div>
 
-        {/* FORMULARIO */}
+        {/* Formulario */}
         <form onSubmit={handleSubmit} style={styles.form}>
           {opcion === "cliente" ? (
             <>
-              <input type="text" name="paterno" placeholder="Apellido paterno" onChange={handleChange} required />
-              <input type="text" name="materno" placeholder="Apellido materno" onChange={handleChange} required />
-              <input type="text" name="nombre" placeholder="Nombre" onChange={handleChange} required />
-              <input type="text" name="dni" placeholder="DNI" onChange={handleChange} required />
-              <input type="date" name="nacimiento" onChange={handleChange} required />
-              <input type="text" name="ciudad" placeholder="Ciudad" onChange={handleChange} required />
-              <input type="text" name="direccion" placeholder="Dirección" onChange={handleChange} required />
-              <input type="text" name="telefono" placeholder="Teléfono" onChange={handleChange} required />
-              <input type="email" name="email" placeholder="Correo electrónico" onChange={handleChange} required />
+              {renderInput("paterno", "Apellido paterno", "text", "Ej: Pérez")}
+              {renderInput("materno", "Apellido materno", "text", "Ej: Gómez")}
+              {renderInput("nombre", "Nombre", "text", "Ej: Juan")}
+              {renderInput("dni", "DNI", "text", "Ej: 12345678")}
+              {renderInput("nacimiento", "Fecha de nacimiento", "date")}
+              {renderInput("ciudad", "Ciudad", "text", "Ej: Guatemala")}
+              {renderInput("direccion", "Dirección", "text", "Ej: 12 Av. Zona 1")}
+              {renderInput("telefono", "Teléfono", "text", "Ej: 5555-5555")}
+              {renderInput("email", "Correo electrónico", "email", "ejemplo@mail.com")}
             </>
           ) : (
             <>
-              <input type="text" name="nombre" placeholder="Nombre del negocio" onChange={handleChange} required />
-              <input type="text" name="nit" placeholder="NIT" onChange={handleChange} required />
-              <input type="text" name="ciudad" placeholder="Ciudad" onChange={handleChange} required />
-              <input type="text" name="direccion" placeholder="Dirección" onChange={handleChange} required />
-              <input type="text" name="telefono" placeholder="Teléfono" onChange={handleChange} required />
-              <input type="email" name="email" placeholder="Correo electrónico" onChange={handleChange} required />
+              {renderInput("nombre", "Nombre del negocio", "text", "Ej: Mi tienda")}
+              {renderInput("nit", "NIT", "text", "Ej: 123456-7")}
+              {renderInput("ciudad", "Ciudad", "text", "Ej: Guatemala")}
+              {renderInput("direccion", "Dirección", "text", "Ej: 12 Av. Zona 1")}
+              {renderInput("telefono", "Teléfono", "text", "Ej: 5555-5555")}
+              {renderInput("email", "Correo electrónico", "email", "ejemplo@mail.com")}
             </>
           )}
 
@@ -156,20 +150,8 @@ function CrearCuenta() {
           </button>
         </form>
 
-        {/* Mensaje de error */}
-        {mensaje && (
-          <p
-            style={{
-              marginTop: "1rem",
-              color: "#f87171",
-              textAlign: "center",
-            }}
-          >
-            {mensaje}
-          </p>
-        )}
+        {mensaje && <p style={styles.error}>{mensaje}</p>}
 
-        {/* Resultado visual */}
         {resultado && (
           <div style={styles.resultado}>
             <h3>{resultado.titulo}</h3>
@@ -196,12 +178,14 @@ const styles = {
     alignItems: "center",
     backgroundColor: "#1a1a1a",
     color: "#fff",
+    padding: "1rem",
   },
   card: {
     backgroundColor: "#2a2a2a",
     padding: "2rem",
     borderRadius: "12px",
-    width: "370px",
+    width: "100%",
+    maxWidth: "450px",
     boxShadow: "0 0 25px rgba(0,0,0,0.3)",
   },
   optionContainer: {
@@ -211,28 +195,55 @@ const styles = {
   },
   optionButton: {
     flex: 1,
-    padding: "0.5rem",
+    padding: "0.75rem",
     margin: "0 0.25rem",
     border: "none",
     borderRadius: "8px",
     color: "#fff",
     cursor: "pointer",
     fontWeight: "bold",
+    transition: "0.3s",
   },
   form: {
     display: "flex",
     flexDirection: "column",
-    gap: "0.75rem",
+    gap: "1rem",
+  },
+  inputGroup: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  label: {
+    marginBottom: "0.25rem",
+    fontSize: "0.9rem",
+    color: "#ccc",
+  },
+  input: {
+    padding: "0.75rem",
+    borderRadius: "8px",
+    border: "1px solid #555",
+    backgroundColor: "#1f1f1f",
+    color: "#fff",
+    fontSize: "1rem",
+    outline: "none",
+    transition: "0.2s",
   },
   submitButton: {
     marginTop: "1rem",
-    padding: "0.75rem",
+    padding: "0.85rem",
     backgroundColor: "#646cff",
     border: "none",
     borderRadius: "8px",
     color: "#fff",
     cursor: "pointer",
     fontWeight: "bold",
+    fontSize: "1rem",
+    transition: "0.2s",
+  },
+  error: {
+    marginTop: "1rem",
+    color: "#f87171",
+    textAlign: "center",
   },
   resultado: {
     marginTop: "1.5rem",

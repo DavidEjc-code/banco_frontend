@@ -6,6 +6,8 @@ import Transferencias from "./components/Transferencias";
 import OrdenPago from "./components/OrdenPago";
 import CrearCuenta from "./components/CrearCuenta";
 import Depositar from "./components/Depositar";
+import CrearNuevaCuenta from "./components/CrearNuevaCuenta";
+import AsociarTarjeta from "./components/AsociarTarjeta";
 
 // --- PÁGINA PRINCIPAL ---
 function Home() {
@@ -52,9 +54,25 @@ function Dashboard() {
 }
 
 function Reporte() {
+  const navigate = useNavigate();
+
   return (
     <div style={styles.page}>
       <h2>📋 Servicio al Cliente</h2>
+      <div style={{ marginTop: "2rem", display: "flex", gap: "1rem", flexDirection: "column" }}>
+        <button
+          style={styles.button}
+          onClick={() => navigate("/servicio/crear-cuenta")}
+        >
+          Crear Nueva Cuenta
+        </button>
+        <button
+          style={styles.button}
+          onClick={() => navigate("/servicio/asociar-tarjeta")}
+        >
+          Asociar Tarjeta
+        </button>
+      </div>
     </div>
   );
 }
@@ -95,6 +113,8 @@ function App() {
         <Route path="/orden-pago" element={<OrdenPago />} />
         <Route path="/crear-cuenta" element={<CrearCuenta />} />
         <Route path="/depositar" element={<Depositar />} />
+        <Route path="/servicio/crear-cuenta" element={<CrearNuevaCuenta />} />
+        <Route path="/servicio/asociar-tarjeta" element={<AsociarTarjeta />} />
       </Routes>
     </Router>
   );

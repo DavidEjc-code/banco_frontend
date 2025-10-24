@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../services/api"; // ✅ Usa tu instancia configurada
 
 function OrdenPago() {
   const [codigoOrden, setCodigoOrden] = useState("");
@@ -23,8 +23,9 @@ function OrdenPago() {
 
       const clienteId = usuario.id;
 
-      const response = await axios.post(
-        `http://localhost:3000/api/v1/cliente/${clienteId}/pagar-orden`,
+      // ✅ Llamada al backend usando la instancia api
+      const response = await api.post(
+        `/cliente/${clienteId}/pagar-orden`,
         { codigoOrden, claveAcceso },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -44,11 +45,9 @@ function OrdenPago() {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}> Pagar Orden de Pago</h1>
+      <h1 style={styles.title}>Pagar Orden de Pago</h1>
 
-   <div style={styles.card}>
-       
-
+      <div style={styles.card}>
         <div style={styles.inputGroup}>
           <label style={styles.label}>Código de Orden</label>
           <input
@@ -72,7 +71,7 @@ function OrdenPago() {
         </div>
 
         <button style={styles.button} onClick={handlePagarOrden}>
-           Pagar Orden
+          Pagar Orden
         </button>
 
         {mensaje && <p style={styles.mensaje}>{mensaje}</p>}
@@ -104,17 +103,6 @@ const styles = {
     borderRadius: "16px",
     boxShadow: "inset 0 0 10px rgba(0,0,0,0.4)",
     textAlign: "left",
-  },
-  requisitos: {
-    fontWeight: "600",
-    marginBottom: "6px",
-    color: "#00bfff",
-  },
-  requisitosList: {
-    margin: "0 0 15px 20px",
-    fontSize: "0.9rem",
-    color: "#ccc",
-    lineHeight: "1.4",
   },
   inputGroup: {
     marginBottom: "15px",
@@ -160,7 +148,5 @@ const styles = {
     boxShadow: "0 0 10px rgba(0,0,0,0.3)",
   },
 };
-
-
 
 export default OrdenPago;
